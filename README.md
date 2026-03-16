@@ -121,11 +121,22 @@ curl -I -H "Accept-Encoding: gzip" http://localhost:8080/index.js
 
 Look for: `Content-Encoding: gzip`
 
+```HTTP/1.1 200 OK
+Server: nginx/1.29.5
+Date: Sun, 15 Mar 2026 20:20:52 GMT
+Content-Type: text/html
+Last-Modified: Fri, 13 Mar 2026 19:13:25 GMT
+Connection: keep-alive
+ETag: W/"69b461d5-4f7b"
+Content-Encoding: gzip
+```
+
 Also verify in browser DevTools → Network tab → select a JS or CSS file →
 check the **Response Headers** panel.
 
 ### 1.1 Reflection Question
 > Why does `gzip_min_length` exist? What's the cost of compressing a 200-byte file?
+>It exists to compress files that are bigger than 1000mb. The cost of compressing a 200 byte file, wouldnt really be that extreme, since our gzip_min_length already covers 200 byte files.
 
 ---
 
@@ -159,6 +170,19 @@ curl -I http://localhost:8080/My_Differential_Equation.mp4
 ```
 
 Confirm different `Cache-Control` values on each response.
+```
+Index:
+HTTP/1.1 200 OK
+Server: nginx/1.29.5
+Date: Sun, 15 Mar 2026 21:12:22 GMT
+Content-Type: text/html
+Content-Length: 20347
+Last-Modified: Fri, 13 Mar 2026 19:13:25 GMT
+Connection: keep-alive
+ETag: "69b461d5-4f7b"
+Cache-Control: no-cache, must-revalidate
+Accept-Ranges: bytes
+```
 
 ### 2.1 - Reflection Question
 > Why would caching `index.html` aggressively be dangerous for a single-page app?
@@ -246,6 +270,8 @@ error_page 404 /404.html;
 ### 4.1 - Reflection Questions
 > If every route returns `index.html` with a 200, what are the SEO implications?
 > How do SSR frameworks like Next.js solve this problem?
+
+>
 
 ---
 
