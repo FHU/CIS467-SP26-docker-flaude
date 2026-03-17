@@ -121,11 +121,23 @@ curl -I -H "Accept-Encoding: gzip" http://localhost:8080/index.js
 
 Look for: `Content-Encoding: gzip`
 
+```HTTP/1.1 200 OK
+Server: nginx/1.29.5
+Date: Sun, 15 Mar 2026 20:20:52 GMT
+Content-Type: text/html
+Last-Modified: Fri, 13 Mar 2026 19:13:25 GMT
+Connection: keep-alive
+ETag: W/"69b461d5-4f7b"
+Content-Encoding: gzip
+```
+
 Also verify in browser DevTools → Network tab → select a JS or CSS file →
 check the **Response Headers** panel.
 
 ### 1.1 Reflection Question
 > Why does `gzip_min_length` exist? What's the cost of compressing a 200-byte file?
+
+>It exists to compress files that are bigger than 1000mb. The cost of compressing a 200 byte file, wouldnt really be that extreme, since our gzip_min_length already covers 200 byte files.
 
 ---
 
@@ -159,11 +171,38 @@ curl -I http://localhost:8080/My_Differential_Equation.mp4
 ```
 
 Confirm different `Cache-Control` values on each response.
+```
+Index:
+HTTP/1.1 200 OK
+Server: nginx/1.29.5
+Date: Sun, 15 Mar 2026 21:12:22 GMT
+Content-Type: text/html
+Content-Length: 20347
+Last-Modified: Fri, 13 Mar 2026 19:13:25 GMT
+Connection: keep-alive
+ETag: "69b461d5-4f7b"
+Cache-Control: no-cache, must-revalidate
+Accept-Ranges: bytes
+```
+```
+HTTP/1.1 200 OK
+Server: nginx/1.29.5
+Date: Mon, 16 Mar 2026 21:45:39 GMT
+Content-Type: video/mp4
+Content-Length: 4767395
+Last-Modified: Mon, 16 Mar 2026 18:20:57 GMT
+Connection: keep-alive
+ETag: "69b84a09-48bea3"
+Cache-Control: public, max-age=31536000, immutable
+Accept-Ranges: bytes
+```
 
 ### 2.1 - Reflection Question
 > Why would caching `index.html` aggressively be dangerous for a single-page app?
+> Constantly caching index.html will be saved everytime you build, if you try to build with a old index.html cache then youll break your website.
 > What would happen if a user's browser cached a stale `index.html` pointing to
 > old JS bundles?
+> The browser will keep requesting the old cache breaking the website.
 
 ---
 
@@ -200,6 +239,7 @@ a tunneling tool, or deploy to a VPS for full scoring).
 > Break the CSP intentionally — add an inline `<script>` tag to `index.html`
 > and observe the browser console error. What does this teach you about
 > how CSP is enforced?
+>The browser stops the inline tag from being executed. It shows that CSP enforces protection at the browser level.
 
 ---
 
@@ -247,6 +287,10 @@ error_page 404 /404.html;
 > If every route returns `index.html` with a 200, what are the SEO implications?
 > How do SSR frameworks like Next.js solve this problem?
 
+> It means that response codes are meaningless, making it harder to focus on what is breaking the website.
+
+> Next.js sends rendering to the server, which gives you control over what gets sent.
+
 ---
 
 ## Checkpoint 5 — Rate Limiting
@@ -284,6 +328,8 @@ Some responses should return `429 Too Many Requests` once the burst is exhausted
 ### 5.1 - Reflection Question
 > Rate limiting on a static site might seem overkill — when would it actually
 > matter in production?
+
+>If someone wanted to take your site down, rate limiting would protect it from bad actors flooding the site with requests.
 
 ---
 
@@ -323,6 +369,8 @@ curl -I http://localhost:8080/.env
 > Why return `404` instead of `403 Forbidden`? What information does each
 > status code leak to an attacker?
 
+>Returning a 404 instead of a 403 doesnt give a attacker any information. It just makes it look like a broken website, and not somthing holding secrets.
+
 ---
 
 ## Final nginx.conf
@@ -341,6 +389,9 @@ Submit a short written response (200-500 words) answering the following:
 3. What does this lab reveal about what managed hosting platforms like Netlify
    are silently doing on your behalf?
 
+> 1. The configuration that had the biggest impact was the .env protection config. Making sure that my .env file is save and all of the secrets inside are safe is what had a impact on me.
+> 2. The rate-limiter config was interesting. Something like the rate-limiter being different across devices suprised me and put into perspective how differnt devices can deal with spam attacks.
+> 3. It shows how much they do in the background. Making sure sites are secure, and are protected from attacks is one of the more obvious things, but also sites compressing files, and making your site run smoother was something I also thought of.
 ---
 
 ## Grading Rubric
@@ -352,3 +403,4 @@ Submit a short written response (200-500 words) answering the following:
 | Written reflection — depth and specificity | 30 |
 | Config is clean, commented, and well-organized | 10 |
 | **Total** | **100** |
+I LOVE ICECREAM
