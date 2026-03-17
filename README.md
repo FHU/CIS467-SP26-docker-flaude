@@ -403,3 +403,4 @@ Submit a short written response (200-500 words) answering the following:
 | Written reflection — depth and specificity | 30 |
 | Config is clean, commented, and well-organized | 10 |
 | **Total** | **100** |
+I LOVE ICECREAM
